@@ -1,0 +1,95 @@
+/* @import url(http://fonts.googleapis.com/css?family=Source+Code+Pro); */
+@import url('https://fonts.googleapis.com/css?family=Architects+Daughter|Open+Sans|Roboto|Source+Code+Pro');
+
+tt, pre {
+   font-family: 'Source Code Pro','Courier New';
+   color:grey;
+   background-color: #FFFFFF;
+   margin-left: 25px;
+   text-indent:0px;
+}
+
+code{
+  font-family: 'Source Code Pro', 'Courier New';
+ /* background-color: #ffffff; */
+} 
+
+pre code {
+    font-family: 'Source Code Pro', 'Courier New';
+    display: block;
+   /* padding: 0.5em; */
+    font-size: 1.0em;
+    line-height: 1.1em;
+  /*  background-color: #FBFADA; */
+    overflow: visible;
+    max-height: none;
+    word-wrap: normal;
+}
+
+.r {
+    font-family: 'Source Code Pro', 'Courier New';  
+    background-color: #FBFADA;
+}
+
+table, th, td {
+  border: 2px solid white;
+  padding-top: 3px;
+  padding-bottom: 13px;
+  padding-right: 15px;
+  padding-left: 10px;
+  background-color: #F5F5F5;
+  vertical-align: top;
+  line-height: 1em;
+}
+
+th.good {
+ vertical-align: center;
+ background: #BCEE68;
+}
+
+th.bad {
+vertical-align: center;
+ background: #FFDAB9;
+}
+
+
+
+.reveal {
+    font-family: "Open Sans", sans-serif;
+    color: #5a5858; 
+    font-size=1.5em;
+}
+
+.reveal .state-background{
+  background: rgb(244, 242, 227);
+}
+
+.reveal code.r{
+ /* font-family: 'Source Code Pro', sans-serif;*/
+  font-family: 'Source Code Pro','Courier New';
+  background-color: #FBFADA;
+}
+
+.reveal pre code {
+    font-family: 'Source Code Pro', sans-serif;
+    display: block;
+    padding: 0.5em;
+    font-size: 1.6em;
+    line-height: 1.4em;
+    background-color: #f5f3f3;
+    overflow: visible;
+    max-height: none;
+    word-wrap: normal;
+}
+
+.reveal h1, .reveal h2, .reveal h3, .reveal h4, .reveal h5, .reveal h6 {
+    font-family: "News Cycle", Impact, sans-serif;
+    color: #d58734;
+}
+
+.reveal table th, .reveal table td  {
+  padding: 0px;
+  border-style: none;
+  text-align: center;
+}
+

@@ -1,0 +1,287 @@
+Colby R User Group
+========================================================
+author: 
+date: 9.30.2021
+autosize: true
+css: Tutorial.css
+
+
+Colby R User Group 
+========================================================
+#### 9.30.2021
+<br>
+- What's new in R 4.1
+   + The native pipe: <code style="color:#d58734;">|></code>
+   + The lambda function : <code style="color:#d58734;">\\</code>
+   + Color palettes
+- Colby hosted web based R platforms
+- General discussion
+
+Colby R User Group 
+========================================================
+#### 9.30.2021
+<br>
+- <mark>What's new in R 4.1</mark>
+   + The native pipe: <code style="color:#d58734;">|></code>
+   + The lambda function : <code style="color:#d58734;">\\</code>
+   + Color palettes
+- Colby hosted web based R platforms
+- General discussion
+
+Why a pipe?
+========================================================
+
+<div style="text-align:center; font-size:1.3em;line-height: 1.5"> Verbose  </div>
+
+
+```{r, eval=FALSE}
+mtcars.sub <- subset(mtcars, select = mpg:hp)
+summary(mtcars.sub)
+```
+
+<div style="text-align:center; font-size:1.3em;line-height: 1.5"> Compact </div>
+
+```{r, eval=FALSE}
+summary(subset(mtcars,select=mpg:hp))
+```
+
+<div style="text-align:center; font-size:1.3em;line-height: 1.5"> Just right? </div>
+
+```{r, eval=FALSE}
+mtcars %>% 
+  subset(select = mpg:hp) %>%
+  summary()
+```
+
+A bit of %>% background
+========================================================
+The `%>%` pipe's origins stem from Stefan Milton Bache's `magrittr` package (now part of the tidyverse suite of packages)
+
+```{r}
+library(magrittr)
+mtcars %>% subset(select = mpg:hp) %>% summary()
+```
+
+
+Pipe was not native to R ... until now 
+========================================================
+
+The native pipe <font style="background-color: #FBFADA; border:1px black;"> `|>` </font>
+
+```{r, eval=FALSE}
+mtcars  |>  
+  subset(select = mpg:hp)  |> 
+  summary()
+```
+
+Shortcut 
+========================================================
+
+Windows: `ctr + shift + M` 
+
+Mac:  `cmd + shift + M`
+
+![Shortcut](shortcut.jpg)
+
+What does a pipe do exactly?
+========================================================
+
+
+
+```{r }
+mtcars |> subset(select= mpg:hp) |> head(10)
+```
+
+
+What does a pipe do exactly?
+========================================================
+
+A pipe feeds the contents (or output) from the left hand side (LHS) into the first *unnamed* argument of the right hand side (RHS) function.
+
+The `subset` function has the following arguments:
+
+```{r echo = FALSE}
+str(args(subset.data.frame))
+```
+
+The first argument is `x =` (the input dataframe)
+
+LHS is piped into 1st  argument of RHS
+========================================================
+
+The pipe passes the contents on the LHS to the first *unnamed* argument ( `x = ...`) of the RHS function. 
+
+![pipe1](pipe_fig1.jpg)
+
+This is the same as writing:
+
+![pipe1](pipe_fig2.jpg)
+
+
+LHS is piped into 1st unnamed argument of RHS
+========================================================
+
+If the input argument is not the first argument, this will pose a problem to both methods. For example, the following command generates an error regardless of the choice of pipes.
+
+```{r ,error=TRUE, fig.show='hide'}
+mtcars |> lm(hp ~ mpg )
+```
+
+
+
+
+LHS is piped into 1st unnamed argument of RHS
+========================================================
+
+If the input argument is not the first argument, this will pose a problem to both methods. For example, the following command generates an error regardless of the choice of pipes.
+
+```{r ,error=TRUE, fig.show='hide'}
+mtcars |> lm(hp ~ mpg )
+```
+
+But if the first argument is named, the LHS gets fed to the second argument in `lm` which is `data = ...`
+
+```{r}
+mtcars |> lm(formula = hp ~ mpg)
+```
+
+
+LHS is piped into 1st unnamed argument of RHS
+========================================================
+
+Naming arguments may not be suitable. For example the following plot function does generate a scatter plot of `hp` vs `mpg` as we might have expected.
+
+```{r}
+mtcars |>  plot(formula = hp ~ mpg)
+```
+
+%>% offers a placeholder "."
+========================================================
+
+The `%>%` operator allows you to specify which argument the LHS is to be piped into.
+
+```{r}
+mtcars %>% lm(hp ~ mpg, data = .)
+```
+
+|> requires an anonymous function
+========================================================
+
+The native pipe does not recognize the `.` placeholder. Instead, you need to embed an *anonymous function*.
+
+```{r, error = TRUE}
+mtcars |>  lm(formula = hp ~ mpg, data = .)
+```
+
+|> requires an anonymous function
+========================================================
+
+The workaround is to embed an anonymous function.
+
+```{r, error = TRUE}
+mtcars |>  (function(x)( lm(hp ~ mpg, x))) ()
+```
+
+|> is faster than %>%
+========================================================
+
+`sqrt(10)` vs. `10 |> sqrt()` vs `10 %>% sqrt()`
+
+```{r echo = FALSE, fig.width = 16, fig.height = 10, out.width="3000px"}
+pipes <- bench::mark( regular = sqrt(10),
+                   `|>` = 10 |> sqrt(),
+                   `%>%` = 10 %>% sqrt(),
+                   min_iterations = 10000000
+)
+
+pipes.df <- data.frame(Type = rep(names(pipes$expression), 
+                                  sapply(pipes$time, length)),
+                       Nanoseconds = unlist(pipes$time) * 10^9, row.names = NULL)
+
+library(ggplot2)
+options(scipen = 999)
+
+pipes.df |> subset(Nanoseconds > 1) |> 
+ggplot() + aes(x=Type, y = Nanoseconds +0.00001) + geom_boxplot() +
+  scale_y_continuous(trans = "log" , breaks = c(50,100,1000,10000, 100000, 1000000)) +
+  coord_flip() +
+  ylab("Nanoseconds") +
+  theme(axis.title.y = element_blank(),
+        axis.ticks = element_blank())
+```
+
+
+The function shorthand: \()
+========================================================
+
+R 4.1 introduces the `\()` shorthand for the `function()` function. This reduces code syntax.
+
+For example, the following lines of code are interchangeable
+
+```{r, error = TRUE, fig.show='hide'}
+mtcars |>  ( function(x)  plot(hp ~ mpg, x)) ()
+mtcars |>  (        \(x)  plot(hp ~ mpg, x)) ()
+```
+
+Another example:
+```{r, error = TRUE}
+f1 <- function(x,y) x + y
+f1 <-        \(x,y) x + y
+f1(2,3)
+```
+
+color palettes
+========================================================
+
+
+```{r echo = FALSE, out.width="3000px", fig.width = 10}
+library(ggplot2)
+cols <- sapply(palette.pals(), palette.colors, n= NULL, recycle = FALSE)
+cols.df <- data.frame(ID = rep(names(cols), sapply(cols, length)),
+           Obs = unlist(cols))
+cols.df$ID <- factor(cols.df$ID,names(cols) )
+
+ggplot(cols.df) + aes(x=ID) + 
+  geom_dotplot(fill=cols.df$Obs,col=cols.df$Obs) + coord_flip() +
+  theme_classic() +
+  theme(axis.line = element_blank(), 
+        axis.title = element_blank(),
+        axis.text.x = element_blank(),
+        axis.ticks = element_blank())
+```
+
+color palettes
+========================================================
+
+To list palettes
+```{r}
+palette.pals()
+```
+
+To set palette
+```{r}
+palette("Pastel 1")
+palette()
+```
+
+Colby R User Group 
+========================================================
+#### 9.30.2021
+<br>
+- What's new in R 4.1
+   + The native pipe: `|>`
+   + The lambda function : `\`
+   + Color palettes
+-  <mark> Colby hosted web based R platforms -> Randy </mark>
+- General discussion
+
+Colby R User Group 
+========================================================
+#### 9.30.2021
+<br>
+- What's new in R 4.1
+   + The native pipe: `|>`
+   + The lambda function : `\`
+   + Color palettes
+-  Colby hosted web based R platforms -> Randy 
+- <mark>General discussion</mark>
