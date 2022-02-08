@@ -227,7 +227,7 @@ ggplot() + aes(x=Type, y = Nanoseconds +0.00001) + geom_boxplot() +
 
 As expected, `10 |> sqrt()`'s performance is identical to `sqrt(10)` (recall that ` |> ` is a simple syntax transformation and not a function). 
 
-# The formula shorthand `/`
+# The formula shorthand `\`
 
 R 4.1 also introduces a shorthand for the `function()` function. This can help reduce code syntax. The shorthand notation may help keep lines of code short when implementing an anonymous function. For example, the following two lines of code perform the exact same operation.
 
